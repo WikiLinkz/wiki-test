@@ -41,7 +41,8 @@ class App extends Component {
     await this.setState({ title, history: [...this.state.history, evt.target.title] })
     const res = await axios.get(`https://en.wikipedia.org/api/rest_v1/page/html/${this.state.title}`)
     this.setState({ html: res.data })
-    console.log('HISTORY', this.state.history)
+    console.log('clicked title: ', title, 'target title: ', this.state.target)
+    if (title === this.state.target) { alert('DAAAAAMN!') }
   }
 
   titleize(title) {
