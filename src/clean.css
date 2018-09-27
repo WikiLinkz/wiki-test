@@ -1,0 +1,7 @@
+body {
+  margin: 8px;
+}
+
+#References, .reflist, .mw-ref{
+  display: none;
+}
