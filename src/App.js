@@ -6,12 +6,30 @@ class App extends Component {
   constructor() {
     super()
     this.state = {
+      start: '',
+      target: '',
       title: '',
       html: '',
-      isLoading: false
+      history: []
     }
     this.handleClick = this.handleClick.bind(this)
     this.titleize = this.titleize.bind(this)
+    this.randomClick = this.randomClick.bind(this)
+  }
+
+  async randomClick() {
+    const randWiki1 = await axios.get(`https://en.wikipedia.org/api/rest_v1/page/random/title`)
+    const randWiki2 = await axios.get(`https://en.wikipedia.org/api/rest_v1/page/random/title`)
+    const start = randWiki1.data.items[0].title
+    const target = randWiki2.data.items[0].title
+    const response = await axios.get(`https://en.wikipedia.org/api/rest_v1/page/html/${start}`)
+    const startHtml = response.data
+    this.setState({
+      start,
+      target,
+      html: startHtml,
+      history: [start.split("_").join(" ")]
+    })
   }
 
   async handleClick(evt) {
@@ -20,12 +38,11 @@ class App extends Component {
     if (evt.target.tagName !== 'A') return
 
     const title = this.titleize(evt.target.title)
-    await this.setState({ title })
-    console.log('title', this.state.title)
+    await this.setState({ title, history: [...this.state.history, evt.target.title] })
     const res = await axios.get(`https://en.wikipedia.org/api/rest_v1/page/html/${this.state.title}`)
-    const htmlRes = res.data
-    this.setState({ html: htmlRes, isLoading: false })
-
+    this.setState({ html: res.data })
+    console.log('clicked title: ', title, 'target title: ', this.state.target)
+    if (title === this.state.target) { alert('DAAAAAMN!') }
   }
 
   titleize(title) {
@@ -33,25 +50,27 @@ class App extends Component {
   }
 
   render() {
+    const history = this.state.history
+
     return (
-      <div className="App">
-        <header className="App-header">
-          <h1 className="App-title">Welcome to React</h1>
+      <div id="game-container" style={{ padding: 50 }}>
+        <header className="game-header">
+          <h1 className="game-title">WikiLinks Game</h1>
         </header>
-        <p className="App-intro">
-          API Tests
-        </p>
         <div>
-          <p>Wiki Pages</p>
-          <ul>
-            <li><a href="/wiki/Commonwealth_of_Nations" onClick={this.handleClick} title='Fullstack Academy'>Fullstack</a></li>
-            {/* <li><a href="/wiki/Commonwealth_of_Nations" onClick={this.handleClick} title='Lower Manhattan'><img src='/public/pets.jpg' /></a></li>
-            <li><a href="/wiki/Commonwealth_of_Nations" onClick={this.handleClick} title='JavaScript'>JavaScript</a></li> */}
-          </ul>
+          <button onClick={this.randomClick}>Start Game</ button>
+          <div className='game-start-target'>
+            <p>Start: {this.state.start.split("_").join(" ")}</p>
+            <p>Target: {this.state.target.split("_").join(" ")}</p>
+            <p>History: {history.join(", ")}</p>
+            <p>Clicks: {history.length - 1}</p>
+          </div>
+          <div>
+            {
+              (this.state.html === '') ? null : <div className='wiki-article' onClick={this.handleClick} dangerouslySetInnerHTML={{ __html: this.state.html }} />
+            }
+          </div>
         </div>
-        {
-          (this.state.html === '') ? <div><h1>hi</h1></div> : <div className='wiki-article' onClick={this.handleClick} dangerouslySetInnerHTML={{ __html: this.state.html }} />
-        }
       </div>
     );
   }
