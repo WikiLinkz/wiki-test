@@ -5,13 +5,16 @@ class BetterRandom extends Component {
   constructor() {
     super()
     this.state = {
-      html: '',
       start: '',
       target: '',
-      topArticles: []
+      topArticles: [],
+      gameTime: 20,
+      loading: false,
+      loadingTime: 10
     }
 
     this.generateGame = this.generateGame.bind(this)
+    this.countDown = this.countDown.bind(this)
   }
 
   async componentDidMount() {
@@ -21,6 +24,7 @@ class BetterRandom extends Component {
     this.setState({
       topArticles: articlesRes.data.items[0].articles
     })
+
   }
   async generateGame() {
     //get random articles from topArticles
@@ -29,17 +33,33 @@ class BetterRandom extends Component {
       start: this.state.topArticles[randomNums[0]].article,
       target: this.state.topArticles[randomNums[1]].article
     })
+    this.countDown()
+  }
+
+  countDown() {
+    setInterval(() => {
+      if (this.state.gameTime === 0) {
+        this.setState({
+          gameTime: 10
+        })
+      }
+      this.setState({
+        gameTime: this.state.gameTime - 1
+      })
+      console.log('gameTime =', this.state.gameTime)
+    }, 1000)
   }
 
   render() {
-    const { start, target } = this.state
+    const { start, target, gameTime } = this.state
     return (
       <div id="better-random">
-        <h1>Better Random</h1>
+        <h1>WikiLinks Game</h1>
         <div id="start-end">
           <button onClick={this.generateGame}>Generate Game</button>
           <p>Start: {cleanTitle(start)}</p>
           <p>Target: {cleanTitle(target)}</p>
+          <button>Join Game {gameTime}s</button>
         </div>
       </div>
     )
@@ -49,11 +69,11 @@ class BetterRandom extends Component {
 const padNum = (num) => {
   const strNum = num.toString()
   if (num < 10) return strNum.padStart(2, '0')
-  else return num
+  return num
 }
 
 const getDate = () => {
-  const newDate = new Date
+  const newDate = new Date()
   const currentYear = newDate.getFullYear()
   const currentMonth = padNum(newDate.getMonth() + 1)
   const currentDay = padNum(newDate.getDate() - 1)
