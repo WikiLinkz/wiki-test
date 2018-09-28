@@ -13,6 +13,7 @@ const defaultState = {
   history: [],
   time: {},
   seconds: gameTime,
+  didWin: false,
 }
 
 
@@ -102,7 +103,11 @@ class App extends Component {
     const res = await axios.get(`https://en.wikipedia.org/api/rest_v1/page/html/${this.state.title}`)
     this.setState({ html: res.data })
     console.log('clicked title: ', title, 'target title: ', this.state.target)
-    if (title === this.state.target) { alert('DAAAAAMN!') }
+    if (title === this.state.target) {
+      alert('DAAAAAMN!');
+      this.setState({
+        didWin: true
+      })}
   }
 
   titleize(title) {
@@ -111,7 +116,28 @@ class App extends Component {
 
   render() {
     const history = this.state.history
-    if (this.state.seconds < 1) {
+    if (this.state.didWin === true) {
+      return (
+        <div id="game-won" style={{ padding: 25 }}>
+        <header className="game-won-header">
+          <h1 className="game-won-title">WikiLinks Game</h1>
+        </header>
+      <div className="game-won-summary" style={{ marginLeft: '35vw', marginRight: '35vw', textAlign: 'center'}}>
+        <h3>YOU WON!!!</h3>
+        <p><b>The target:</b><br /> {this.state.target.split('_').join(' ')}</p>
+        <p><b>Your history:</b><br /> {this.state.history.join(' => ')}</p>
+        <p><b>Total clicks:</b><br /> {this.state.history.length - 1}</p>
+        <button onClick={()=> {
+          let timeLeftVar = this.secondsToTime(gameTime);
+          this.setState({...defaultState,
+            time: timeLeftVar
+          })
+          }}>Play Again</ button>
+        </div>
+        </div>
+      )
+    }
+    else if (this.state.seconds < 1) {
       alert("Time's up!")
       return (
         <div id="game-lost" style={{ padding: 25 }}>
