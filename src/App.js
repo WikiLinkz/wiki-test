@@ -87,7 +87,7 @@ class App extends Component {
     const startHtml = response.data
     this.setState({
       start,
-      target: 'Jesus',
+      target,
       html: startHtml,
       history: [start.split("_").join(" ")]
     })
@@ -116,7 +116,6 @@ class App extends Component {
   }
 
   render() {
-    console.log(this.state)
     const history = this.state.history
     if (this.state.didWin === true) {
       return (
