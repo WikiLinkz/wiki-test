@@ -87,7 +87,7 @@ class App extends Component {
     const startHtml = response.data
     this.setState({
       start,
-      target,
+      target: 'Jesus',
       html: startHtml,
       history: [start.split("_").join(" ")]
     })
@@ -105,6 +105,7 @@ class App extends Component {
     console.log('clicked title: ', title, 'target title: ', this.state.target)
     if (title === this.state.target) {
       alert('DAAAAAMN!');
+      clearInterval(this.timer)
       this.setState({
         didWin: true
       })}
@@ -115,6 +116,7 @@ class App extends Component {
   }
 
   render() {
+    console.log(this.state)
     const history = this.state.history
     if (this.state.didWin === true) {
       return (
