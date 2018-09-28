@@ -105,6 +105,7 @@ class App extends Component {
     console.log('clicked title: ', title, 'target title: ', this.state.target)
     if (title === this.state.target) {
       alert('DAAAAAMN!');
+      clearInterval(this.timer)
       this.setState({
         didWin: true
       })}
