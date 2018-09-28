@@ -51,14 +51,6 @@ class App extends Component {
     this.setState({ time: timeLeftVar });
   }
 
-  // componentDidUpdate() {
-  //   if (this.state.seconds === 0) {
-  //     let timeLeftVar = this.secondsToTime(this.state.seconds);
-  //     this.setState({...defaultState,
-  //       time: timeLeftVar})
-  //   }
-  // }
-
   startTimer() {
     if (this.timer === 0 && this.state.seconds > 0) {
       this.timer = setInterval(this.countDown, 1000);
@@ -119,17 +111,18 @@ class App extends Component {
 
   render() {
     const history = this.state.history
-    if (this.state.seconds === 0) {
+    if (this.state.seconds < 1) {
       alert("Time's up!")
       return (
-        <div id="game-container" style={{ padding: 25 }}>
-        <header className="game-header">
-          <h1 className="game-title">WikiLinks Game</h1>
-        </header>
-        <div>
+        <div id="game-lost" style={{ padding: 25 }}>
+          <header className="game-lost-header">
+            <h1 className="game-lost-title">WikiLinks Game</h1>
+          </header>
+        <div className="game-lost-summary" style={{ marginLeft: '35vw', marginRight: '35vw', textAlign: 'center'}}>
           <h3>You ran out of time :(</h3>
-          <p>The target: {this.state.target.split('_').join(' ')}</p>
-          <p>Your history: {this.state.history.join(' => ')}</p>
+          <p><b>The target:</b><br /> {this.state.target.split('_').join(' ')}</p>
+          <p><b>Your history:</b><br /> {this.state.history.join(' => ')}</p>
+          <p><b>Total clicks:</b><br /> {this.state.history.length - 1}</p>
           <button onClick={()=> {
             let timeLeftVar = this.secondsToTime(gameTime);
             this.setState({...defaultState,
@@ -145,10 +138,6 @@ class App extends Component {
     if (clicks === -1) {
       clicks = 0
     }
-
-    console.log("this.timer", this.timer)
-    console.log("this.state.seconds", this.state.seconds)
-    console.log("this.state.countDown", this.state.countDown)
 
     return (
       <div id="game-container" style={{ padding: 25 }}>
