@@ -3,7 +3,7 @@ import './clean.css'
 import axios from 'axios'
 
 // in seconds
-const gameTime = 15
+const gameTime = 90
 
 const defaultState = {
   start: '',
